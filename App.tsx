@@ -1,18 +1,59 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+
+// Import Components
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Home from './pages/Home';
 
-const App: React.FC = () => {
-  return (
-      <div className="bg-brand-gray min-h-screen flex flex-col font-sans text-gray-800">
+// Import Pages
+import Home from './pages/Home';
+import About from './pages/About';
+import Services from './pages/Services';
+import HowItWorks from './pages/HowItWorks';
+import Simulator from './pages/Simulator';
+import Contact from './pages/Contact';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+
+// Layout para páginas públicas que incluem Header e Footer
+const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <div className="bg-brand-gray min-h-screen flex flex-col font-sans text-gray-800">
         <Header />
         <main className="flex-grow">
-          <Home />
+            {children}
         </main>
         <Footer />
-      </div>
-  );
+    </div>
+);
+
+// Componente de verificação de autenticação para a rota de admin
+const PrivateRoute: React.FC = () => {
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
+    return isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />;
+};
+
+
+const App: React.FC = () => {
+    return (
+        <Router>
+            <Routes>
+                {/* Rotas Públicas */}
+                <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+                <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+                <Route path="/services" element={<PublicLayout><Services /></PublicLayout>} />
+                <Route path="/how-it-works" element={<PublicLayout><HowItWorks /></PublicLayout>} />
+                <Route path="/simulator" element={<PublicLayout><Simulator /></PublicLayout>} />
+                <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+
+                {/* Rotas de Admin */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin/dashboard" element={<PrivateRoute />} />
+
+                {/* Redirecionar para home se a rota não for encontrada */}
+                <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+        </Router>
+    );
 };
 
 export default App;
