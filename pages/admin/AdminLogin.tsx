@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BaobabIcon } from '../components/icons/BaobabIcon';
+import { BaobabIcon } from '../../components/icons/BaobabIcon';
 
 const AdminLogin: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -9,7 +9,7 @@ const AdminLogin: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+        const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
         if (isAdmin) {
             navigate('/admin/dashboard');
         }
@@ -18,7 +18,7 @@ const AdminLogin: React.FC = () => {
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
         if (username === 'ivany.massinga' && password === 'Ractis@23') {
-            localStorage.setItem('isAdmin', 'true');
+            sessionStorage.setItem('isAdmin', 'true');
             navigate('/admin/dashboard');
         } else {
             setError('Credenciais inválidas. Tente novamente.');

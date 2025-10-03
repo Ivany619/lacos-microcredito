@@ -12,8 +12,12 @@ import Services from './pages/Services';
 import HowItWorks from './pages/HowItWorks';
 import Simulator from './pages/Simulator';
 import Contact from './pages/Contact';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/dashboard/AdminDashboard';
+import GestaoClientes from './pages/dashboard/clientes/GestaoClientes';
+import GestaoEmprestimos from './pages/dashboard/emprestimos/GestaoEmprestimos';
+import GestaoPagamentos from './pages/dashboard/pagamentos/GestaoPagamentos';
+import Notificacoes from './pages/dashboard/notificacoes/Notificacoes';
 
 // Layout para páginas públicas que incluem Header e Footer
 const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -27,9 +31,9 @@ const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 );
 
 // Componente de verificação de autenticação para a rota de admin
-const PrivateRoute: React.FC = () => {
-    const isAdmin = localStorage.getItem('isAdmin') === 'true';
-    return isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />;
+const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+    return isAdmin ? <>{children}</> : <Navigate to="/admin/login" />;
 };
 
 
@@ -47,7 +51,20 @@ const App: React.FC = () => {
 
                 {/* Rotas de Admin */}
                 <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin/dashboard" element={<PrivateRoute />} />
+                <Route
+                    path="/admin/dashboard"
+                    element={
+                        <PrivateRoute>
+                            <AdminDashboard />
+                        </PrivateRoute>
+                    }
+                >
+                    <Route index element={<Navigate to="clientes" />} />
+                    <Route path="clientes" element={<GestaoClientes />} />
+                    <Route path="emprestimos" element={<GestaoEmprestimos />} />
+                    <Route path="pagamentos" element={<GestaoPagamentos />} />
+                    <Route path="notificacoes" element={<Notificacoes />} />
+                </Route>
 
                 {/* Redirecionar para home se a rota não for encontrada */}
                 <Route path="*" element={<Navigate to="/" />} />
